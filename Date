@@ -1,0 +1,318 @@
+
+
+#include "pch.h"
+#include <iostream>
+#include <string>
+#include <cstdlib>
+using namespace std;
+
+class Date {
+
+private:
+
+	int day;
+	int month;
+	int year;
+	int monthsInYear[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+	string monthNames[12] = { "January", "Feburary","March", "April", "May", "June", "July", "August", "September", "Octorber", "November","December" };
+
+	string monthName;
+
+public:
+
+	Date(int dayIn, int monthIn, int yearIn) {
+
+		day = dayIn;
+		month = monthIn;
+		year = yearIn;
+
+		monthName = monthNames[monthIn - 1];
+
+	} Date() {}
+
+
+	void setDay(int input) {
+
+		bool inputCorrect = false;
+
+		while (inputCorrect == false) {
+
+			if (input > 0 || input < 32) {
+
+				day = input;
+				inputCorrect = true;
+
+			}
+
+			else {
+
+				cout << "Your input is not valid for the day. Please enter a date between 1 and 31:";
+				cin >> input;
+
+			}
+
+		}
+
+	}
+	int setMonth(int input) {
+
+		bool inputCorrect = false;
+
+		while (inputCorrect == false) {
+
+			if (input > 0 || input < 13) {
+
+				month = input;
+				inputCorrect = true;
+
+			}
+
+			else {
+
+				cout << "Your input is not valid for the month. Please enter a month between 1 and 12:";
+				cin >> input;
+
+			}
+
+
+		}
+
+	}
+	int setYear(int input) {
+
+		year = input;
+	}
+
+	int getDay() {
+
+		return day;
+
+	}
+
+	int getMonth() {
+
+		return month;
+	}
+	int getYear() {
+
+		return year;
+	}
+
+	void printMonthNumDayYear() {
+
+		cout << month << "/" << day << "/" << year << "\n";
+	}
+	void printMonthDayYear() {
+
+		cout << monthName << " " << day << ", " << year << "\n";
+
+	}
+	void printDayMonthYear() {
+
+		cout << day << " " << month << " " << year;
+
+	} Date operator ++() {
+
+		++day;
+
+		if (day > monthsInYear[month] && month == 12) {
+
+			day = 1;
+			month = 1;
+			monthName = monthNames[month - 1];
+
+
+		}
+
+		else if (day > monthsInYear[month]) {
+
+			day = 1;
+			month++;
+			monthName = monthNames[month - 1];
+
+		}
+
+		return *this;
+
+	};
+
+	Date operator ++ (int) {
+
+
+		Date dayPost(day, month, year);
+		day++;
+
+		if (day > monthsInYear[month] && month == 12) {
+
+			day = 1;
+			month = 1;
+			monthName = monthNames[month - 1];
+			year++;
+
+
+		}
+
+		else if (day > monthsInYear[month]) {
+
+			day = 1;
+			month++;
+			monthName = monthNames[month - 1];
+
+
+		}
+
+		return dayPost;
+
+
+	} Date operator -- () {
+
+
+		--day;
+
+		if (day < 1 && month == 1) {
+
+
+			month = 12;
+			day = monthsInYear[month - 1];
+			monthName = monthNames[month - 1];
+			year--;
+
+		}
+		else if (day < 1) {
+
+			month--;
+			monthName = monthNames[month - 1];
+			day = monthsInYear[month];
+
+		}
+
+		return *this;
+
+	} Date operator -- (int) {
+
+		Date dayPost(day, month, year);
+		day--;
+
+		if (day < 1 && month == 1) {
+
+
+			month = 12;
+			day = monthsInYear[month - 1];
+			monthName = monthNames[month - 1];
+			year--;
+
+		}
+		else if (day < 1) {
+
+			month--;
+			monthName = monthNames[month - 1];
+			day = monthsInYear[month];
+
+		}
+
+		return dayPost;
+
+
+	} int operator - (Date &dates) {
+
+		int daysUpdate = 0;
+		int yearUpdate;
+		int daysInYearOne = 0;
+		int daysInYearTwo = 0;
+
+		daysInYearOne += day;
+		daysInYearTwo += dates.day;
+
+		yearUpdate = abs((year - dates.year) * 365);
+
+		for (int i = 0; i < month; i++) {
+
+			daysInYearOne += monthsInYear[i];
+
+		}
+
+		for (int j = 0; j < dates.month; j++) {
+
+			daysInYearTwo += dates.monthsInYear[j];
+
+		}
+
+		daysUpdate = abs(daysInYearOne - daysInYearTwo);
+
+		daysUpdate += yearUpdate;
+
+		return daysUpdate;
+	}
+
+	friend ostream & operator << (ostream &out, Date &dateIn) {
+
+
+		out << dateIn.monthNames[dateIn.month] << " " << dateIn.day << ", " << dateIn.year;
+		return out;
+
+
+	} friend istream & operator >> (istream &in, Date &dateIn) {
+
+		bool dayAccepted = false;
+		bool monthAccepted = false;
+		while (dayAccepted == false) {
+
+
+			cout << "Enter the day: " << endl;
+			in >> dateIn.day;
+
+			if (dateIn.day > 0 && dateIn.day < 32) {
+
+				dayAccepted = true;
+
+			}
+			else {
+
+				cout << "Please re enter a valid date." << endl;
+			}
+
+		}
+
+		while (monthAccepted == false) {
+
+			cout << "Enter the number of the month: " << endl;
+			in >> dateIn.month;
+
+			if (dateIn.month > 0 && dateIn.month < 32) {
+
+				monthAccepted = true;
+
+			}
+			else {
+
+				cout << "Please re enter a valid month." << endl;
+
+			}
+
+		}
+
+		cout << "Enter the year: " << endl;
+		in >> dateIn.year;
+
+		return in;
+
+	}
+
+
+};
+
+int main() {
+
+	Date dateOne;
+	Date dateTwo(3, 3, 2018);
+
+	cin >> dateOne;
+	cout << dateOne;
+
+	int difference = dateOne - dateTwo;
+	cout << "\n";
+	cout << difference;
+
+	return 0;
+}
+
